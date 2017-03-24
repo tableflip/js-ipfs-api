@@ -68,6 +68,7 @@
     "hapi": "^16.1.0",
     "interface-ipfs-core": "github:ipfs/interface-ipfs-core#fix/pubsub-load-test",
     "ipfsd-ctl": "~0.20.0",
+    "node-int64": "^0.4.0",
     "pre-commit": "^1.2.2",
     "socket.io": "^1.7.3",
     "socket.io-client": "^1.7.3",
