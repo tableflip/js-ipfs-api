@@ -11,6 +11,7 @@ function requireCommands () {
     bootstrap: require('../bootstrap'),
     commands: require('../commands'),
     config: require('../config'),
+    dag: require('../dag'),
     dht: require('../dht'),
     diag: require('../diag'),
     id: require('../id'),
