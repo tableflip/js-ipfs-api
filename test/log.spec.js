@@ -8,12 +8,13 @@ const expect = chai.expect
 chai.use(dirtyChai)
 const FactoryClient = require('./ipfs-factory/client')
 
-describe('.log', () => {
+describe('.log', function () {
+  this.timeout(50 * 1000)
+
   let ipfs
   let fc
 
-  before(function (done) {
-    this.timeout(20 * 1000) // slow CI
+  before((done) => {
     fc = new FactoryClient()
     fc.spawnNode((err, node) => {
       expect(err).to.not.exist()
