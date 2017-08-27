@@ -10,16 +10,16 @@
     "http": "stream-http"
   },
   "scripts": {
-    "test": "gulp test",
-    "test:node": "gulp test:node",
-    "test:browser": "gulp test:browser",
-    "lint": "aegir-lint",
-    "build": "gulp build",
-    "release": "gulp release",
-    "release-minor": "gulp release --type minor",
-    "release-major": "gulp release --type major",
-    "coverage": "gulp coverage",
-    "coverage-publish": "aegir-coverage publish"
+    "test": "aegir test",
+    "test:node": "aegir test --target node",
+    "test:browser": "aegir --target browser",
+    "lint": "aegir lint",
+    "build": "aegir build",
+    "release": "aegir release",
+    "release-minor": "aegir release --type minor",
+    "release-major": "aegir release --type major",
+    "coverage": "aegir coverage",
+    "coverage-publish": "aegir coverage --upload"
   },
   "dependencies": {
     "async": "^2.5.0",
@@ -37,7 +37,7 @@
     "is-stream": "^1.1.0",
     "lru-cache": "^4.1.1",
     "multiaddr": "^2.3.0",
-    "multihashes": "~0.4.5",
+    "multihashes": "~0.4.8",
     "multipart-stream": "^2.0.1",
     "ndjson": "^1.5.0",
     "once": "^1.4.0",
@@ -60,18 +60,18 @@
     "url": "https://github.com/ipfs/js-ipfs-api"
   },
   "devDependencies": {
-    "aegir": "^11.0.2",
+    "aegir": "^12.0.0",
     "chai": "^4.1.1",
     "dirty-chai": "^2.0.1",
-    "eslint-plugin-react": "^7.1.0",
+    "eslint-plugin-react": "^7.3.0",
     "gulp": "^3.9.1",
     "hapi": "^16.5.2",
-    "interface-ipfs-core": "~0.30.1",
+    "interface-ipfs-core": "~0.31.2",
     "ipfsd-ctl": "~0.21.0",
     "pre-commit": "^1.2.2",
     "socket.io": "^2.0.3",
     "socket.io-client": "^2.0.3",
-    "stream-equal": "^1.0.0"
+    "stream-equal": "^1.0.1"
   },
   "pre-commit": [
     "lint",
