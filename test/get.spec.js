@@ -175,9 +175,9 @@ describe('.get', () => {
               })
           })
         })
-      .catch((err) => {
-        expect(err).to.not.exist()
-      })
+        .catch((err) => {
+          expect(err).to.not.exist()
+        })
     })
   })
 })

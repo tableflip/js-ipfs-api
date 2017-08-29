@@ -69,7 +69,7 @@ describe('.files (the MFS API part)', () => {
 
     it('files.write', (done) => {
       ipfs.files
-        .write('/test-folder/test-file-2.txt', new Buffer('hello world'), {create: true}, (err) => {
+        .write('/test-folder/test-file-2.txt', Buffer.from('hello world'), {create: true}, (err) => {
           expect(err).to.not.exist()
 
           ipfs.files.read('/test-folder/test-file-2.txt', (err, stream) => {
@@ -91,7 +91,7 @@ describe('.files (the MFS API part)', () => {
 
     it('files.write without options', (done) => {
       ipfs.files
-        .write('/test-folder/test-file-2.txt', new Buffer('hello world'), (err) => {
+        .write('/test-folder/test-file-2.txt', Buffer.from('hello world'), (err) => {
           expect(err).to.not.exist()
 
           ipfs.files.read('/test-folder/test-file-2.txt', (err, stream) => {
@@ -154,7 +154,7 @@ describe('.files (the MFS API part)', () => {
             buf += data
           })
           .on('end', () => {
-            expect(new Buffer(buf)).to.deep.equal(testfile)
+            expect(Buffer.from(buf)).to.deep.equal(testfile)
             done()
           })
       })
@@ -188,7 +188,7 @@ describe('.files (the MFS API part)', () => {
 
     it('files.write', (done) => {
       ipfs.files
-        .write('/test-folder/test-file-2.txt', new Buffer('hello world'), {create: true})
+        .write('/test-folder/test-file-2.txt', Buffer.from('hello world'), {create: true})
         .then(() => {
           return ipfs.files.read('/test-folder/test-file-2.txt')
         })
@@ -211,7 +211,7 @@ describe('.files (the MFS API part)', () => {
 
     it('files.write without options', (done) => {
       ipfs.files
-        .write('/test-folder/test-file-2.txt', new Buffer('hello world'))
+        .write('/test-folder/test-file-2.txt', Buffer.from('hello world'))
         .then(() => {
           return ipfs.files.read('/test-folder/test-file-2.txt')
         })
@@ -267,7 +267,7 @@ describe('.files (the MFS API part)', () => {
               buf += data
             })
             .on('end', () => {
-              expect(new Buffer(buf)).to.deep.equal(testfile)
+              expect(Buffer.from(buf)).to.eql(testfile)
               done()
             })
         })
