@@ -25,12 +25,13 @@ if (isNode) {
   testfileBig = fs.createReadStream(tfbPath, { bufferSize: 128 })
 }
 
-describe('.get', () => {
+describe('.get', function () {
+  this.timeout(50 * 1000)
+
   let ipfs
   let fc
 
-  before(function (done) {
-    this.timeout(20 * 1000) // slow CI
+  before((done) => {
     fc = new FactoryClient()
     fc.spawnNode((err, node) => {
       expect(err).to.not.exist()

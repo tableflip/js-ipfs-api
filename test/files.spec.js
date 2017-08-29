@@ -15,12 +15,13 @@ const testfile = isNode
   ? loadFixture(__dirname, '/fixtures/testfile.txt')
   : loadFixture(__dirname, 'fixtures/testfile.txt')
 
-describe('.files (the MFS API part)', () => {
+describe('.files (the MFS API part)', function () {
+  this.timeout(50 * 1000)
+
   let ipfs
   let fc
 
   before(function (done) {
-    this.timeout(20 * 1000) // slow CI
     fc = new FactoryClient()
     fc.spawnNode((err, node) => {
       expect(err).to.not.exist()
