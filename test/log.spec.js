@@ -9,7 +9,7 @@ chai.use(dirtyChai)
 const FactoryClient = require('./ipfs-factory/client')
 
 describe('.log', function () {
-  this.timeout(50 * 1000)
+  this.timeout(80 * 1000)
 
   let ipfs
   let fc

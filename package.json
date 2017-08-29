@@ -10,7 +10,7 @@
     "http": "stream-http"
   },
   "scripts": {
-    "test": "aegir test",
+    "test": "aegir test --no-parallel",
     "test:node": "aegir test --target node --no-parallel",
     "test:browser": "aegir test --target browser",
     "lint": "aegir lint",
@@ -66,7 +66,7 @@
     "eslint-plugin-react": "^7.3.0",
     "gulp": "^3.9.1",
     "hapi": "^16.5.2",
-    "interface-ipfs-core": "~0.31.4",
+    "interface-ipfs-core": "~0.31.5",
     "ipfsd-ctl": "~0.21.0",
     "pre-commit": "^1.2.2",
     "socket.io": "^2.0.3",

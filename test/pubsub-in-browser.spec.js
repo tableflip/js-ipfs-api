@@ -50,133 +50,135 @@ function spawnWithId (factory, callback) {
   ], callback)
 }
 
-if (!isNode) {
-  describe('.pubsub-browser (pubsub not supported in the browsers currently)', () => {
-    const topic = 'pubsub-tests'
+describe('.pubsub-browser (pubsub not supported in the browsers currently)', () => {
+  if (isNode) {
+    it('skip these in Node.js')
+    return
+  }
+  const topic = 'pubsub-tests'
 
-    let factory
-    let ipfs1
+  let factory
+  let ipfs1
 
-    before((done) => {
-      factory = new FactoryClient()
+  before((done) => {
+    factory = new FactoryClient()
 
-      series([
-        (cb) => spawnWithId(factory, cb)
-      ], (err, nodes) => {
-        if (err) {
-          return done(err)
-        }
+    series([
+      (cb) => spawnWithId(factory, cb)
+    ], (err, nodes) => {
+      if (err) {
+        return done(err)
+      }
 
-        ipfs1 = nodes[0]
-        done()
-      })
+      ipfs1 = nodes[0]
+      done()
     })
+  })
 
-    after((done) => {
-      factory.dismantle(done)
-    })
+  after((done) => {
+    factory.dismantle(done)
+  })
 
-    describe('everything errors', () => {
-      describe('Callback API', () => {
-        describe('.publish', () => {
-          it('throws an error if called in the browser', (done) => {
-            ipfs1.pubsub.publish(topic, 'hello friend', (err, topics) => {
-              expect(err).to.exist()
-              expect(err.message).to.equal(expectedError)
-              done()
-            })
-          })
-        })
-
-        describe('.subscribe', () => {
-          const handler = () => {}
-          it('throws an error if called in the browser', (done) => {
-            ipfs1.pubsub.subscribe(topic, {}, handler, (err, topics) => {
-              expect(err).to.exist()
-              expect(err.message).to.equal(expectedError)
-              done()
-            })
-          })
-        })
-
-        describe('.peers', () => {
-          it('throws an error if called in the browser', (done) => {
-            ipfs1.pubsub.peers(topic, (err, topics) => {
-              expect(err).to.exist()
-              expect(err.message).to.equal(expectedError)
-              done()
-            })
-          })
-        })
-
-        describe('.ls', () => {
-          it('throws an error if called in the browser', (done) => {
-            ipfs1.pubsub.ls((err, topics) => {
-              expect(err).to.exist()
-              expect(err.message).to.equal(expectedError)
-              done()
-            })
-          })
-        })
-      })
-
-      describe('Promise API', () => {
-        describe('.publish', () => {
-          it('throws an error if called in the browser', () => {
-            return ipfs1.pubsub.publish(topic, 'hello friend')
-              .catch((err) => {
-                expect(err).to.exist()
-                expect(err.message).to.equal(expectedError)
-              })
-          })
-        })
-
-        describe('.subscribe', () => {
-          const handler = () => {}
-          it('throws an error if called in the browser', (done) => {
-            ipfs1.pubsub.subscribe(topic, {}, handler)
-              .catch((err) => {
-                expect(err).to.exist()
-                expect(err.message).to.equal(expectedError)
-                done()
-              })
-          })
-        })
-
-        describe('.peers', () => {
-          it('throws an error if called in the browser', (done) => {
-            ipfs1.pubsub.peers(topic)
-              .catch((err) => {
-                expect(err).to.exist()
-                expect(err.message).to.equal(expectedError)
-                done()
-              })
-          })
-        })
-
-        describe('.ls', () => {
-          it('throws an error if called in the browser', () => {
-            return ipfs1.pubsub.ls()
-              .catch((err) => {
-                expect(err).to.exist()
-                expect(err.message).to.equal(expectedError)
-              })
-          })
-        })
-      })
-
-      describe('.unsubscribe', () => {
+  describe('everything errors', () => {
+    describe('Callback API', () => {
+      describe('.publish', () => {
         it('throws an error if called in the browser', (done) => {
-          try {
-            ipfs1.pubsub.unsubscribe()
-            done('unsubscribe() didn\'t throw an error')
-          } catch (err) {
+          ipfs1.pubsub.publish(topic, 'hello friend', (err, topics) => {
             expect(err).to.exist()
             expect(err.message).to.equal(expectedError)
             done()
-          }
+          })
+        })
+      })
+
+      describe('.subscribe', () => {
+        const handler = () => {}
+        it('throws an error if called in the browser', (done) => {
+          ipfs1.pubsub.subscribe(topic, {}, handler, (err, topics) => {
+            expect(err).to.exist()
+            expect(err.message).to.equal(expectedError)
+            done()
+          })
+        })
+      })
+
+      describe('.peers', () => {
+        it('throws an error if called in the browser', (done) => {
+          ipfs1.pubsub.peers(topic, (err, topics) => {
+            expect(err).to.exist()
+            expect(err.message).to.equal(expectedError)
+            done()
+          })
+        })
+      })
+
+      describe('.ls', () => {
+        it('throws an error if called in the browser', (done) => {
+          ipfs1.pubsub.ls((err, topics) => {
+            expect(err).to.exist()
+            expect(err.message).to.equal(expectedError)
+            done()
+          })
         })
       })
     })
+
+    describe('Promise API', () => {
+      describe('.publish', () => {
+        it('throws an error if called in the browser', () => {
+          return ipfs1.pubsub.publish(topic, 'hello friend')
+            .catch((err) => {
+              expect(err).to.exist()
+              expect(err.message).to.equal(expectedError)
+            })
+        })
+      })
+
+      describe('.subscribe', () => {
+        const handler = () => {}
+        it('throws an error if called in the browser', (done) => {
+          ipfs1.pubsub.subscribe(topic, {}, handler)
+            .catch((err) => {
+              expect(err).to.exist()
+              expect(err.message).to.equal(expectedError)
+              done()
+            })
+        })
+      })
+
+      describe('.peers', () => {
+        it('throws an error if called in the browser', (done) => {
+          ipfs1.pubsub.peers(topic)
+            .catch((err) => {
+              expect(err).to.exist()
+              expect(err.message).to.equal(expectedError)
+              done()
+            })
+        })
+      })
+
+      describe('.ls', () => {
+        it('throws an error if called in the browser', () => {
+          return ipfs1.pubsub.ls()
+            .catch((err) => {
+              expect(err).to.exist()
+              expect(err.message).to.equal(expectedError)
+            })
+        })
+      })
+    })
+
+    describe('.unsubscribe', () => {
+      it('throws an error if called in the browser', (done) => {
+        try {
+          ipfs1.pubsub.unsubscribe()
+          done('unsubscribe() didn\'t throw an error')
+        } catch (err) {
+          expect(err).to.exist()
+          expect(err.message).to.equal(expectedError)
+          done()
+        }
+      })
+    })
   })
-}
+})
