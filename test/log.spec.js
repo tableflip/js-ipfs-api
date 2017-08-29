@@ -9,7 +9,7 @@ chai.use(dirtyChai)
 const FactoryClient = require('./ipfs-factory/client')
 
 describe('.log', function () {
-  this.timeout(300 * 1000)
+  this.timeout(100 * 1000)
 
   let ipfs
   let fc
@@ -25,7 +25,9 @@ describe('.log', function () {
 
   after((done) => fc.dismantle(done))
 
-  describe('Callback API', () => {
+  describe('Callback API', function () {
+    this.timeout(100 * 1000)
+
     it('.log.tail', (done) => {
       const req = ipfs.log.tail((err, res) => {
         expect(err).to.not.exist()
@@ -63,7 +65,9 @@ describe('.log', function () {
     })
   })
 
-  describe('Promise API', () => {
+  describe('Promise API', function () {
+    this.timeout(100 * 1000)
+
     it('.log.tail', () => {
       return ipfs.log.tail()
         .then((res) => {
