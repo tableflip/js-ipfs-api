@@ -18,8 +18,8 @@
     "release": "aegir release --no-parallel",
     "release-minor": "aegir release --type minor --no-parallel",
     "release-major": "aegir release --type major --no-parallel",
-    "coverage": "aegir coverage",
-    "coverage-publish": "aegir coverage --upload"
+    "coverage": "aegir coverage --no-parallel",
+    "coverage-publish": "aegir coverage --upload --no-parallel"
   },
   "dependencies": {
     "async": "^2.5.0",
