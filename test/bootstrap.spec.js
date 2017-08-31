@@ -12,7 +12,7 @@ const invalidArg = 'this/Is/So/Invalid/'
 const validIp4 = '/ip4/104.236.176.52/tcp/4001/ipfs/QmSoLnSGccFuZQJzRadHn95W2CrSFmZuTdDWP8HXaHca9z'
 
 describe('.bootstrap', function () {
-  this.timeout(50 * 1000)
+  this.timeout(100 * 1000)
 
   let ipfs
   let fc
@@ -32,7 +32,9 @@ describe('.bootstrap', function () {
 
   let peers
 
-  describe('Callback API', () => {
+  describe('Callback API', function () {
+    this.timeout(100 * 1000)
+
     describe('.add', () => {
       it('returns an error when called with an invalid arg', (done) => {
         ipfs.bootstrap.add(invalidArg, (err) => {
@@ -113,7 +115,9 @@ describe('.bootstrap', function () {
     })
   })
 
-  describe('Promise API', () => {
+  describe('Promise API', function () {
+    this.timeout(100 * 1000)
+
     describe('.add', () => {
       it('returns an error when called without args or options', () => {
         return ipfs.bootstrap.add(null)

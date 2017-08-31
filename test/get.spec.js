@@ -26,7 +26,7 @@ if (isNode) {
 }
 
 describe('.get', function () {
-  this.timeout(50 * 1000)
+  this.timeout(80 * 1000)
 
   let ipfs
   let fc
@@ -43,6 +43,8 @@ describe('.get', function () {
   after((done) => fc.dismantle(done))
 
   describe('Callback API', () => {
+    this.timeout(80 * 1000)
+
     it('add file for testing', (done) => {
       const expectedMultihash = 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'
 
@@ -160,6 +162,8 @@ describe('.get', function () {
   })
 
   describe('Promise API', () => {
+    this.timeout(80 * 1000)
+
     it('get', (done) => {
       ipfs.get('Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP')
         .then((files) => {

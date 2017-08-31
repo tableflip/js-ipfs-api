@@ -16,12 +16,12 @@ const testfile = isNode
   : loadFixture(__dirname, 'fixtures/testfile.txt')
 
 describe('.files (the MFS API part)', function () {
-  this.timeout(50 * 1000)
+  this.timeout(120 * 1000)
 
   let ipfs
   let fc
 
-  before(function (done) {
+  before((done) => {
     fc = new FactoryClient()
     fc.spawnNode((err, node) => {
       expect(err).to.not.exist()
@@ -32,7 +32,9 @@ describe('.files (the MFS API part)', function () {
 
   after((done) => fc.dismantle(done))
 
-  describe('Callback API', () => {
+  describe('Callback API', function () {
+    this.timeout(120 * 1000)
+
     it('add file for testing', (done) => {
       const expectedMultihash = 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'
 
@@ -170,7 +172,9 @@ describe('.files (the MFS API part)', function () {
     })
   })
 
-  describe('Promise API', () => {
+  describe('Promise API', function () {
+    this.timeout(120 * 1000)
+
     it('files.mkdir', () => {
       return ipfs.files.mkdir('/test-folder')
     })
