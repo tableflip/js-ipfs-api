@@ -11,7 +11,8 @@ const loadFixture = require('aegir/fixtures')
 const concat = require('concat-stream')
 const through = require('through2')
 const streamToValue = require('../src/utils/stream-to-value')
-
+const mh = require('multihashes')
+const CID = require('cids')
 const FactoryClient = require('./ipfs-factory/client')
 
 const testfile = isNode
@@ -25,6 +26,16 @@ function createTestFile (content) {
     content: Buffer.from(content)
   }
 }
+
+const HASH_ALGS = [
+  'sha1',
+  'sha2-256',
+  'sha2-512',
+  'keccak-224',
+  'keccak-256',
+  'keccak-384',
+  'keccak-512'
+]
 
 describe('.files (the MFS API part)', function () {
   this.timeout(120 * 1000)
@@ -126,6 +137,25 @@ describe('.files (the MFS API part)', function () {
             const message = `Failed to get block for ${hash}: context canceled`
             expect(err.message.indexOf(message)).to.be.above(-1)
           })
+          done()
+        })
+      })
+    })
+
+    HASH_ALGS.forEach((name) => {
+      it(`files.add with hash=${name} and raw-leaves=false`, (done) => {
+        const content = String(Math.random() + Date.now())
+        const file = {
+          path: content + '.txt',
+          content: Buffer.from(content)
+        }
+        const options = { hash: name, 'raw-leaves': false }
+
+        ipfs.files.add([file], options, (err, res) => {
+          if (err) return done(err)
+          expect(res).to.have.length(1)
+          const cid = new CID(res[0].hash)
+          expect(mh.decode(cid.multihash).name).to.equal(name)
           done()
         })
       })
@@ -286,6 +316,24 @@ describe('.files (the MFS API part)', function () {
           expect(res[0].hash).to.equal(expectedMultihash)
           expect(res[0].path).to.equal(expectedMultihash)
         })
+    })
+
+    HASH_ALGS.forEach((name) => {
+      it(`files.add with hash=${name} and raw-leaves=false`, () => {
+        const content = String(Math.random() + Date.now())
+        const file = {
+          path: content + '.txt',
+          content: Buffer.from(content)
+        }
+        const options = { hash: name, 'raw-leaves': false }
+
+        return ipfs.files.add([file], options)
+          .then((res) => {
+            expect(res).to.have.length(1)
+            const cid = new CID(res[0].hash)
+            expect(mh.decode(cid.multihash).name).to.equal(name)
+          })
+      })
     })
 
     it('files.mkdir', () => {
