@@ -27,7 +27,7 @@ function createTestFile (content) {
   }
 }
 
-// TODO: Test against all algorithms Object.keys(mh.names) +function createTestFile (content) {
+// TODO: Test against all algorithms Object.keys(mh.names)
 // This subset is known to work with both go-ipfs and js-ipfs as of 2017-09-05
 const HASH_ALGS = [
   'sha1',
