@@ -8,14 +8,22 @@ const expect = chai.expect
 chai.use(dirtyChai)
 const isNode = require('detect-node')
 const loadFixture = require('aegir/fixtures')
+const streamToValue = require('../src/utils/stream-to-value')
 const mh = require('multihashes')
 const CID = require('cids')
-
 const FactoryClient = require('./ipfs-factory/client')
 
 const testfile = isNode
   ? loadFixture(__dirname, '/fixtures/testfile.txt')
   : loadFixture(__dirname, 'fixtures/testfile.txt')
+
+function createTestFile (content) {
+  content = content || String(Math.random() + Date.now())
+  return {
+    path: content + '.txt',
+    content: Buffer.from(content)
+  }
+}
 
 // TODO: Test against all algorithms Object.keys(mh.names)
 // This subset is known to work with both go-ipfs and js-ipfs as of 2017-09-05
@@ -84,6 +92,43 @@ describe('.files (the MFS API part)', function () {
         expect(res[0].hash).to.equal(expectedMultihash)
         expect(res[0].path).to.equal(expectedMultihash)
         done()
+      })
+    })
+
+    it('files.add without only-hash', (done) => {
+      const content = String(Math.random() + Date.now())
+      const inputFile = createTestFile(content)
+
+      ipfs.files.add([inputFile], { onlyHash: false }, (err, res) => {
+        expect(err).to.not.exist()
+
+        const hash = res[0].hash
+
+        ipfs.refs.local().then((refs) => {
+          const hashes = refs.map(r => r.Ref)
+          expect(hashes.indexOf(hash)).to.be.above(-1)
+          done()
+        })
+      })
+    })
+
+    it('files.add with only-hash', (done) => {
+      const inputFile = createTestFile()
+
+      ipfs.files.add([inputFile], {'only-hash': true}, (err, res) => {
+        expect(err).to.not.exist()
+
+        streamToValue(res, (err, collected) => {
+          expect(err).to.not.exist()
+
+          const hash = collected[0].Hash
+
+          ipfs.refs.local().then((refs) => {
+            const hashes = refs.map(r => r.Ref)
+            expect(hashes.indexOf(hash)).to.equal(-1)
+            done()
+          })
+        })
       })
     })
 
@@ -260,6 +305,40 @@ describe('.files (the MFS API part)', function () {
           expect(res).to.have.length(1)
           expect(res[0].hash).to.equal(expectedMultihash)
           expect(res[0].path).to.equal(expectedMultihash)
+        })
+    })
+
+    it('files.add without only-hash', (done) => {
+      const inputFile = createTestFile()
+
+      ipfs.files.add([inputFile], { onlyHash: false })
+        .then((res) => {
+          const hash = res[0].hash
+
+          ipfs.refs.local().then((refs) => {
+            const hashes = refs.map(r => r.Ref)
+            expect(hashes.indexOf(hash)).to.be.above(-1)
+            done()
+          })
+        })
+    })
+
+    it('files.add with only-hash', (done) => {
+      const inputFile = createTestFile()
+
+      ipfs.files.add([inputFile], {'only-hash': true})
+        .then((res) => {
+          streamToValue(res, (err, collected) => {
+            expect(err).to.not.exist()
+
+            const hash = collected[0].Hash
+
+            ipfs.refs.local().then((refs) => {
+              const hashes = refs.map(r => r.Ref)
+              expect(hashes.indexOf(hash)).to.equal(-1)
+              done()
+            })
+          })
         })
     })
 
