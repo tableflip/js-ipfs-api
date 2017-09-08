@@ -39,7 +39,7 @@ const HASH_ALGS = [
   'keccak-512'
 ]
 
-describe('.files (the MFS API part)', function () {
+describe.only('.files (the MFS API part)', function () {
   this.timeout(120 * 1000)
 
   let ipfs
@@ -105,20 +105,11 @@ describe('.files (the MFS API part)', function () {
         expect(err).to.not.exist()
 
         const hash = res[0].hash
-        let retrievedContent = ''
 
-        ipfs.get(hash, (err, res) => {
-          expect(err).to.not.exist()
-
-          res.pipe(through.obj((file, encoding, next) => {
-            file.content.pipe(concat(retrieved => {
-              retrievedContent += retrieved.toString()
-              next()
-            }))
-          }, () => {
-            expect(content).to.equal(retrievedContent)
-            done()
-          }))
+        ipfs.refs.local().then((refs) => {
+          const hashes = refs.map(r => r.Ref)
+          expect(hashes.indexOf(hash)).to.be.above(-1)
+          done()
         })
       })
     })
@@ -316,6 +307,40 @@ describe('.files (the MFS API part)', function () {
           expect(res).to.have.length(1)
           expect(res[0].hash).to.equal(expectedMultihash)
           expect(res[0].path).to.equal(expectedMultihash)
+        })
+    })
+
+    it('files.add without only-hash', (done) => {
+      const inputFile = createTestFile()
+
+      ipfs.files.add([inputFile], { onlyHash: false })
+        .then((res) => {
+          const hash = res[0].hash
+
+          ipfs.refs.local().then((refs) => {
+            const hashes = refs.map(r => r.Ref)
+            expect(hashes.indexOf(hash)).to.be.above(-1)
+            done()
+          })
+        })
+    })
+
+    it('files.add with only-hash', (done) => {
+      const inputFile = createTestFile()
+
+      ipfs.files.add([inputFile], {'only-hash': true})
+        .then((res) => {
+          streamToValue(res, (err, collected) => {
+            expect(err).to.not.exist()
+
+            const hash = collected[0].Hash
+
+            ipfs.refs.local().then((refs) => {
+              const hashes = refs.map(r => r.Ref)
+              expect(hashes.indexOf(hash)).to.equal(-1)
+              done()
+            })
+          })
         })
     })
 
