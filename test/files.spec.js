@@ -8,8 +8,6 @@ const expect = chai.expect
 chai.use(dirtyChai)
 const isNode = require('detect-node')
 const loadFixture = require('aegir/fixtures')
-const concat = require('concat-stream')
-const through = require('through2')
 const streamToValue = require('../src/utils/stream-to-value')
 const mh = require('multihashes')
 const CID = require('cids')
@@ -39,7 +37,7 @@ const HASH_ALGS = [
   'keccak-512'
 ]
 
-describe.only('.files (the MFS API part)', function () {
+describe('.files (the MFS API part)', function () {
   this.timeout(120 * 1000)
 
   let ipfs
