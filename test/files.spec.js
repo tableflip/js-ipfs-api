@@ -27,6 +27,8 @@ function createTestFile (content) {
   }
 }
 
+// TODO: Test against all algorithms Object.keys(mh.names) +function createTestFile (content) {
+// This subset is known to work with both go-ipfs and js-ipfs as of 2017-09-05
 const HASH_ALGS = [
   'sha1',
   'sha2-256',
@@ -121,7 +123,7 @@ describe('.files (the MFS API part)', function () {
       })
     })
 
-    it.only('files.add with only-hash', (done) => {
+    it('files.add with only-hash', (done) => {
       const inputFile = createTestFile()
 
       ipfs.files.add([inputFile], {'only-hash': true}, (err, res) => {
@@ -132,12 +134,11 @@ describe('.files (the MFS API part)', function () {
 
           const hash = collected[0].Hash
 
-          ipfs.files.get(hash, (err, res) => {
-            expect(err).to.exist()
-            const message = `Failed to get block for ${hash}: context canceled`
-            expect(err.message.indexOf(message)).to.be.above(-1)
+          ipfs.refs.local().then((refs) => {
+            const hashes = refs.map(r => r.Ref)
+            expect(hashes.indexOf(hash)).to.equal(-1)
+            done()
           })
-          done()
         })
       })
     })
