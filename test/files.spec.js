@@ -8,12 +8,34 @@ const expect = chai.expect
 chai.use(dirtyChai)
 const isNode = require('detect-node')
 const loadFixture = require('aegir/fixtures')
-
+const concat = require('concat-stream')
+const through = require('through2')
+const streamToValue = require('../src/utils/stream-to-value')
+const mh = require('multihashes')
+const CID = require('cids')
 const FactoryClient = require('./ipfs-factory/client')
 
 const testfile = isNode
   ? loadFixture(__dirname, '/fixtures/testfile.txt')
   : loadFixture(__dirname, 'fixtures/testfile.txt')
+
+function createTestFile (content) {
+  content = content || String(Math.random() + Date.now())
+  return {
+    path: content + '.txt',
+    content: Buffer.from(content)
+  }
+}
+
+const HASH_ALGS = [
+  'sha1',
+  'sha2-256',
+  'sha2-512',
+  'keccak-224',
+  'keccak-256',
+  'keccak-384',
+  'keccak-512'
+]
 
 describe('.files (the MFS API part)', function () {
   this.timeout(120 * 1000)
@@ -70,6 +92,72 @@ describe('.files (the MFS API part)', function () {
         expect(res[0].hash).to.equal(expectedMultihash)
         expect(res[0].path).to.equal(expectedMultihash)
         done()
+      })
+    })
+
+    it('files.add without only-hash', (done) => {
+      const content = String(Math.random() + Date.now())
+      const inputFile = createTestFile(content)
+
+      ipfs.files.add([inputFile], { onlyHash: false }, (err, res) => {
+        expect(err).to.not.exist()
+
+        const hash = res[0].hash
+        let retrievedContent = ''
+
+        ipfs.get(hash, (err, res) => {
+          expect(err).to.not.exist()
+
+          res.pipe(through.obj((file, encoding, next) => {
+            file.content.pipe(concat(retrieved => {
+              retrievedContent += retrieved.toString()
+              next()
+            }))
+          }, () => {
+            expect(content).to.equal(retrievedContent)
+            done()
+          }))
+        })
+      })
+    })
+
+    it.only('files.add with only-hash', (done) => {
+      const inputFile = createTestFile()
+
+      ipfs.files.add([inputFile], {'only-hash': true}, (err, res) => {
+        expect(err).to.not.exist()
+
+        streamToValue(res, (err, collected) => {
+          expect(err).to.not.exist()
+
+          const hash = collected[0].Hash
+
+          ipfs.files.get(hash, (err, res) => {
+            expect(err).to.exist()
+            const message = `Failed to get block for ${hash}: context canceled`
+            expect(err.message.indexOf(message)).to.be.above(-1)
+          })
+          done()
+        })
+      })
+    })
+
+    HASH_ALGS.forEach((name) => {
+      it(`files.add with hash=${name} and raw-leaves=false`, (done) => {
+        const content = String(Math.random() + Date.now())
+        const file = {
+          path: content + '.txt',
+          content: Buffer.from(content)
+        }
+        const options = { hash: name, 'raw-leaves': false }
+
+        ipfs.files.add([file], options, (err, res) => {
+          if (err) return done(err)
+          expect(res).to.have.length(1)
+          const cid = new CID(res[0].hash)
+          expect(mh.decode(cid.multihash).name).to.equal(name)
+          done()
+        })
       })
     })
 
@@ -228,6 +316,24 @@ describe('.files (the MFS API part)', function () {
           expect(res[0].hash).to.equal(expectedMultihash)
           expect(res[0].path).to.equal(expectedMultihash)
         })
+    })
+
+    HASH_ALGS.forEach((name) => {
+      it(`files.add with hash=${name} and raw-leaves=false`, () => {
+        const content = String(Math.random() + Date.now())
+        const file = {
+          path: content + '.txt',
+          content: Buffer.from(content)
+        }
+        const options = { hash: name, 'raw-leaves': false }
+
+        return ipfs.files.add([file], options)
+          .then((res) => {
+            expect(res).to.have.length(1)
+            const cid = new CID(res[0].hash)
+            expect(mh.decode(cid.multihash).name).to.equal(name)
+          })
+      })
     })
 
     it('files.mkdir', () => {
